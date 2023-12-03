@@ -1,3 +1,4 @@
+from collections import defaultdict
 from dataclasses import dataclass
 from typing import List
 import requests
@@ -24,8 +25,9 @@ blank = '.'
 data = input.content.decode('utf-8').split('\n')
 data = [r for r in data if r]
 # data = data[:20]
-
 res = 0
+
+potential_gears = defaultdict(list)
 
 for j, row in enumerate(data):
     # row = row[:10]
@@ -42,31 +44,37 @@ for j, row in enumerate(data):
         num_str = m['num']
         numbers.append(num_str)
         
-        potential_part_coords = []
-        potential_part_coords.append((j, i-1))
-        potential_part_coords.append((j, i+len(num_str)))
+        potential_gear_coords = []
+        potential_gear_coords.append((j, i-1))
+        potential_gear_coords.append((j, i+len(num_str)))
         for k in range(i-1, i+len(num_str)+1):
-            potential_part_coords.append((j-1, k))
-            potential_part_coords.append((j+1, k))       
+            potential_gear_coords.append((j-1, k))
+            potential_gear_coords.append((j+1, k))       
         
-        potential_part_coords = [
-            c for c in potential_part_coords if all([
+        potential_gear_coords = [
+            c for c in potential_gear_coords if all([
                 0 <= c[0] < len(data),
                 0 <= c[1] < len(row),
             ])
         ]
 
+        0==0
         
-        for part_j, part_i in potential_part_coords:
-            if not (data[part_j][part_i].isdigit() or data[part_j][part_i] == '.'):
-                number_is_part_number = True
-                numbers_to_add.append(int(num_str))
-                res += int(num_str)
-                break
+        for part_j, part_i in potential_gear_coords:
+            if data[part_j][part_i] == '*':
+                potential_gears[(part_j, part_i)].append(int(num_str))
+            
         
+                
+                
          
         
         i+=len(num_str)
-    print(j, row, numbers, numbers_to_add)
+    print(j, row, numbers)
+
+for coords, values in potential_gears.items():
+    if len(values) == 2:
+        res += values[0] * values[1]
+        print(values[0], values[1], values[0] * values[1]) 
 print(res)
     
