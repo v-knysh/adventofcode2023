@@ -23,18 +23,27 @@ input = requests.get('https://adventofcode.com/2023/day/4/input', headers={
 data = input.content.decode('utf-8').split('\n')
 data = [r for r in data if r]
 
-res = 0
 
+card_instances_count = {i:1 for i in range(1, len(data)+1)}
 
 card_regex = re.compile(r'Card\s*?(?P<card_id>\d*):(?P<winning_nums>.*)\|(?P<received_nums>.*)')
 for j, row in enumerate(data):
     m = card_regex.match(row)
-    card_id = m['card_id']
+    card_id = int(m['card_id'])
     winning_nums = [int(n) for n in m['winning_nums'].split(' ') if n.isdigit()]
     received_nums = [int(n) for n in m['received_nums'].split(' ') if n.isdigit()]
     card_winning_nums = set(winning_nums).intersection(set(received_nums))
-    if card_winning_nums:
-        res += 2**(len(card_winning_nums)-1)
     
-print(res)
+    current_card_intances = card_instances_count[card_id]
+
+    card_copies_created = []    
+    if card_winning_nums:
+        for i in range(card_id+1, len(card_winning_nums)+card_id+1):
+            if i<=len(data):
+                card_instances_count[i] += current_card_intances
+                card_copies_created.append(i)
+
+    print(card_id, len(card_winning_nums), current_card_intances, card_copies_created)
+
+print(sum(card_instances_count.values()))
     
