@@ -55,12 +55,16 @@ if __name__ == "__main__":
     input_regex = re.compile('Time:\s*?(?P<time>[\d\s]*)\nDistance:\s*?(?P<Distance>[\d\s]*)')
     input_match = input_regex.match(data)
     
-    races = [Race(i[0], i[1]) for i in zip(
-        [int(t) for t in input_match['time'].split(' ') if t],
-        [int(d) for d in input_match['Distance'].split(' ') if d],        
-    )]
-    races[0].max_int_time
+    # races = [Race(i[0], i[1]) for i in zip(
+    #     [int(t) for t in input_match['time'].replace(' ', '') if t],
+    #     [int(d) for d in input_match['Distance'].replace(' ', '') if d],        
+    # )]
+    # races[0].max_int_time
     
+    races = [Race(
+        int(input_match['time'].replace(' ', '')),
+        int(input_match['Distance'].replace(' ', ''))
+    )]
     r = 1
     for i in races:
         r *= i.possible_solutions
